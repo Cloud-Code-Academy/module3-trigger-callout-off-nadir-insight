@@ -22,6 +22,12 @@ public with sharing class NewsAPIService {
         // - Build the request URL
         // - Make the callout
         // - Parse and return the response
+        List<String> newsTopics = new List<String>{'business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'};
+
+        String searchCategory = newsTopics.contains(category) ? category : 'general';
+
+        String endpoint = 'callout:NewsApi_NC/top-headlines?' + 'category=' + searchCategory;
+        HttpResponse response = makeCallout(endpoint);
         
         return null;
     }
@@ -36,8 +42,13 @@ public with sharing class NewsAPIService {
         // - Create and configure HTTP request
         // - Make the callout
         // - Handle exceptions
-        
-        return null;
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint(endpoint);
+        request.setMethod('GET');
+        Http http = new Http();
+        HttpResponse response = http.send(request);
+        NewsAPIResponse newsResponse = parseResponse(response.getBody());
+        return newsResponse;
     }
     
     /**
