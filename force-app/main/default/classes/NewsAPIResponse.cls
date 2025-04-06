@@ -25,15 +25,15 @@ public class NewsAPIResponse {
          * Converts the API article to a Salesforce Article__c record
          * @return Article__c The Salesforce record
          */
-        public Article__c toSObject() {
+        public Article__c toSObject(String categoryId, String category) {
             // TODO: Implement conversion from API article to Salesforce record
             Article__c sfArticle = new Article__c();
             sfArticle.Author__c = this.author;
-            sfArticle.Category__c = null;
-            sfArticle.Content__c = this.content.left(131072);
+            sfArticle.Category__c = category;
+            sfArticle.Content__c = this.content == null ? null : this.content.left(131072);
             sfArticle.Country__c = null;
             sfArticle.Description__c = this.description.left(32768);
-            sfArticle.News_Category__c = null;
+            sfArticle.News_Category__c = categoryId;
             sfArticle.Published_At__c = (DateTime) JSON.deserialize('\"' + this.publishedAt + '\"', Datetime.class);
             sfArticle.Source__c = this.source.name;
             sfArticle.Title__c = this.title.left(255);
@@ -57,10 +57,10 @@ public class NewsAPIResponse {
      * Helper method to convert all articles in this response to Salesforce records
      * @return List<Article__c> List of Salesforce records
      */
-    public List<Article__c> toSObjects() {
+    public List<Article__c> toSObjects(String categoryId, String category ) {
         List<Article__c> sfArticles = new List<Article__c>();
         for (Article article : this.articles) {
-            sfArticles.add(article.toSObject());
+            sfArticles.add(article.toSObject(categoryId, category));
         }
         return sfArticles;
     }
