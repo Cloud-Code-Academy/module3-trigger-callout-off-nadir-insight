@@ -12,6 +12,14 @@ public class NewsAPIResponse {
      */
     public class Article {
         // TODO: Define article fields
+        public Source source;
+        public String author;
+        public String title;
+        public String description;
+        public String url;
+        public String urlToImage;
+        public String publishedAt;
+        public String content;
         
         /**
          * Converts the API article to a Salesforce Article__c record
@@ -19,12 +27,21 @@ public class NewsAPIResponse {
          */
         public Article__c toSObject() {
             // TODO: Implement conversion from API article to Salesforce record
-            // Consider:
-            // - Handling date conversion
-            // - Generating a unique record name
-            // - Handling field length limits
+            Article__c sfArticle = new Article__c();
+            sfArticle.Author__c = this.author;
+            sfArticle.Category__c = null;
+            sfArticle.Content__c = this.content.left(131072);
+            sfArticle.Country__c = null;
+            sfArticle.Description__c = this.description.left(32768);
+            sfArticle.News_Category__c = null;
+            sfArticle.Published_At__c = (DateTime) JSON.deserialize('\"' + this.publishedAt + '\"', Datetime.class);
+            sfArticle.Source__c = this.source.name;
+            sfArticle.Title__c = this.title.left(255);
+            sfArticle.url__c = this.url.left(255);
+            sfArticle.urlToImage__c = this.urlToImage.left(255);
+            sfArticle.Name = String.valueOf(sfArticle.Published_At__c) + sfArticle.Title__c.left(232); // 255 string length - date time char length
             
-            return null;
+            return sfArticle;
         }
     }
     
@@ -32,7 +49,8 @@ public class NewsAPIResponse {
      * Inner class representing a news source
      */
     public class Source {
-        // TODO: Define source fields
+        public String id;
+        public String name;
     }
     
     /**
@@ -40,7 +58,10 @@ public class NewsAPIResponse {
      * @return List<Article__c> List of Salesforce records
      */
     public List<Article__c> toSObjects() {
-        // TODO: Implement conversion of all articles to Salesforce records
-        return null;
+        List<Article__c> sfArticles = new List<Article__c>();
+        for (Article article : this.articles) {
+            sfArticles.add(article.toSObject());
+        }
+        return sfArticles;
     }
 } 
