@@ -19,11 +19,20 @@ public with sharing class NewsAPIService {
     public static NewsAPIResponse getTopHeadlinesByCategory(String category, Integer pageSize, Integer page) {
         // TODO: Implement method to fetch headlines by category
         // - Validate and set defaults for parameters
+        String urlPageSize = pageSize > 0 && pageSize <= 100 ? String.valueOf(pageSize) : '20';
+        String urlPage = page > 0 ? String.valueOf(page) : '1';
         // - Build the request URL
         // - Make the callout
         // - Parse and return the response
+        HttpRequest request = new HttpRequest();
+        request.setMethod('GET');
+        request.setEndpoint(API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + urlPageSize + '&page=' + urlPage);
+        Http http = new Http();
+        HttpResponse response = http.send(request);
+
+        NewsAPIResponse newsApiResponse = (NewsAPIResponse) JSON.deserialize(response.getBody(), NewsAPIResponse.class);
         
-        return null;
+        return newsApiResponse;
     }
     
     /**
