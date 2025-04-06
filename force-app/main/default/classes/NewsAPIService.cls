@@ -9,6 +9,19 @@ public with sharing class NewsAPIService {
     // TODO: Define default parameters
     private static final Integer DEFAULT_PAGE_SIZE = 20; 
     
+    @future(callout=true)
+    public static void insertHeadlinesByCategory(String categoryId, String category) {
+        HttpRequest request = new HttpRequest();
+        request.setMethod('GET');
+        request.setEndpoint(API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + DEFAULT_PAGE_SIZE + '&page=1');
+        Http http = new Http();
+        HttpResponse response = http.send(request);
+
+        NewsAPIResponse newsApiResponse = (NewsAPIResponse) JSON.deserialize(response.getBody(), NewsAPIResponse.class);
+
+        insert newsApiResponse.toSObjects(categoryId, category);
+    }
+
     /**
      * Fetches top headlines for a specified category with pagination support
      * @param category The news category (business, entertainment, general, health, science, sports, technology)
