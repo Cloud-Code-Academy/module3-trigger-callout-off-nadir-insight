@@ -52,5 +52,5 @@ $RECYCLE.BIN/
 .idea/
 .history/
 IlluminatedCloud/
-.namedCredential-meta.xml
+*.namedCredential-meta.xml
 .externalCredential-meta.xml
