@@ -58,13 +58,8 @@ public with sharing class NewsAPIService {
         // - Create and configure HTTP request
         // - Make the callout
         // - Handle exceptions
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint(endpoint);
-        request.setMethod('GET');
-        Http http = new Http();
-        HttpResponse response = http.send(request);
-        NewsAPIResponse newsResponse = parseResponse(response.getBody());
-        return newsResponse;
+        
+        return null;
     }
     
     /**
