@@ -4,6 +4,9 @@ private class NewsCategoryTriggerTest {
     @TestSetup
     static void setup() {
         // Create test data
+        Test.setMock(HttpCalloutMock.class, NewsAPIMock.createSuccessMock());
+        // is this line required to prevent the triggers from attempting a callout during setup???
+        
         List<News_Category__c> categories = new List<News_Category__c>{
             new News_Category__c(
                 Name = 'Technology',
@@ -57,6 +60,7 @@ private class NewsCategoryTriggerTest {
     
     @IsTest
     static void testInsertWithSyncFalse() {
+
         Test.startTest();
         
         // Create a new category with Sync__c = false

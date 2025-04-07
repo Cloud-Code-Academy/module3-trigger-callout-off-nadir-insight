@@ -9,6 +9,19 @@ public with sharing class NewsAPIService {
     // TODO: Define default parameters
     private static final Integer DEFAULT_PAGE_SIZE = 20; 
     
+    @future(callout=true)
+    public static void insertHeadlinesByCategory(String categoryId, String category) {
+        HttpRequest request = new HttpRequest();
+        request.setMethod('GET');
+        request.setEndpoint(API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + DEFAULT_PAGE_SIZE + '&page=1');
+        Http http = new Http();
+        HttpResponse response = http.send(request);
+
+        NewsAPIResponse newsApiResponse = (NewsAPIResponse) JSON.deserialize(response.getBody(), NewsAPIResponse.class);
+
+        insert newsApiResponse.toSObjects(categoryId, category);
+    }
+
     /**
      * Fetches top headlines for a specified category with pagination support
      * @param category The news category (business, entertainment, general, health, science, sports, technology)
@@ -19,17 +32,20 @@ public with sharing class NewsAPIService {
     public static NewsAPIResponse getTopHeadlinesByCategory(String category, Integer pageSize, Integer page) {
         // TODO: Implement method to fetch headlines by category
         // - Validate and set defaults for parameters
+        String urlPageSize = pageSize > 0 && pageSize <= 100 ? String.valueOf(pageSize) : '20';
+        String urlPage = page > 0 ? String.valueOf(page) : '1';
         // - Build the request URL
         // - Make the callout
         // - Parse and return the response
-        List<String> newsTopics = new List<String>{'business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'};
+        HttpRequest request = new HttpRequest();
+        request.setMethod('GET');
+        request.setEndpoint(API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + urlPageSize + '&page=' + urlPage);
+        Http http = new Http();
+        HttpResponse response = http.send(request);
 
-        String searchCategory = newsTopics.contains(category) ? category : 'general';
-
-        String endpoint = 'callout:NewsApi_NC/top-headlines?' + 'category=' + searchCategory;
-        HttpResponse response = makeCallout(endpoint);
+        NewsAPIResponse newsApiResponse = (NewsAPIResponse) JSON.deserialize(response.getBody(), NewsAPIResponse.class);
         
-        return null;
+        return newsApiResponse;
     }
     
     /**
