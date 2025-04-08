@@ -54,7 +54,11 @@ public with sharing class NewsAPIService {
         Http http = new Http();
         
         try {
-            return http.send(request);
+            HttpResponse response = http.send(request);
+            if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {
+                throw new CalloutException('Error status code: ' + response.getStatus());
+            }
+            return response;
         } catch (Exception e) {
             throw new CalloutException('Callout exception: ' + e.getMessage());
         }
