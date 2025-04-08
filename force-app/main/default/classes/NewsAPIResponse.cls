@@ -44,7 +44,6 @@ public class NewsAPIResponse {
         }
     }
 
-    
     /**
      * Inner class representing a news source
      */
