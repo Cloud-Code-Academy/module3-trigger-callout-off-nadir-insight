@@ -58,8 +58,17 @@ public with sharing class NewsAPIService {
         // - Create and configure HTTP request
         // - Make the callout
         // - Handle exceptions
+        HttpRequest request = new HttpRequest();
+        request.setMethod('GET');
+        request.setEndpoint(endpoint);
+
+        Http http = new Http();
         
-        return null;
+        return http.send(request);
+    }
+
+    private static String constructEndpoint(String category, String pageSize, String page) {
+        return API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + pageSize + '&page=' + page;
     }
     
     /**
