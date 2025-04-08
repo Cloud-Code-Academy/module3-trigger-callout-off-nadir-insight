@@ -30,22 +30,16 @@ public with sharing class NewsAPIService {
      * @return NewsAPIResponse The wrapper object containing the API response
      */
     public static NewsAPIResponse getTopHeadlinesByCategory(String category, Integer pageSize, Integer page) {
-        // TODO: Implement method to fetch headlines by category
-        // - Validate and set defaults for parameters
         String urlPageSize = pageSize > 0 && pageSize <= 100 ? String.valueOf(pageSize) : '20';
         String urlPage = page > 0 ? String.valueOf(page) : '1';
-        // - Build the request URL
-        // - Make the callout
-        // - Parse and return the response
-        HttpRequest request = new HttpRequest();
-        request.setMethod('GET');
-        request.setEndpoint(API_NAMED_CREDENTIAL + API_ENDPOINT + '/?category=' + category + '&pageSize=' + urlPageSize + '&page=' + urlPage);
-        Http http = new Http();
-        HttpResponse response = http.send(request);
 
-        NewsAPIResponse newsApiResponse = (NewsAPIResponse) JSON.deserialize(response.getBody(), NewsAPIResponse.class);
-        
-        return newsApiResponse;
+        String urlEndpoint = constructEndpoint(category, String.valueOf(pageSize), String.valueOf(page));
+        HttpResponse response = makeCallout(urlEndpoint);
+        try {
+            return parseResponse(response.getBody());
+        } catch (Exception e) {
+            throw new NewsAPIException('NewsAPIResponse error: ' + e.getMessage());
+        }
     }
     
     /**
@@ -54,17 +48,16 @@ public with sharing class NewsAPIService {
      * @return HttpResponse The HTTP response
      */
     private static HttpResponse makeCallout(String endpoint) {
-        // TODO: Implement HTTP callout
-        // - Create and configure HTTP request
-        // - Make the callout
-        // - Handle exceptions
         HttpRequest request = new HttpRequest();
         request.setMethod('GET');
         request.setEndpoint(endpoint);
-
         Http http = new Http();
         
-        return http.send(request);
+        try {
+            return http.send(request);
+        } catch (Exception e) {
+            throw new CalloutException('Callout exception: ' + e.getMessage());
+        }
     }
 
     private static String constructEndpoint(String category, String pageSize, String page) {
@@ -76,16 +69,19 @@ public with sharing class NewsAPIService {
      * @param jsonResponse The JSON response string
      * @return NewsAPIResponse The parsed response object
      */
-    private static NewsAPIResponse parseResponse(String jsonResponse) {
-        // TODO: Implement JSON parsing
-        // - Deserialize JSON to NewsAPIResponse
-        // - Handle exceptions
+    private static NewsAPIResponse parseResponse(String jsonResponseBody) {
+        try {
+            return (NewsAPIResponse) JSON.deserialize(jsonResponseBody, NewsAPIResponse.class);    
+        } catch (Exception e) {
+            throw new JsonParsingException('JSON parsing error: ' + e.getMessage());
+        }
         
-        return null;
     }
     
     /**
      * Custom exception class for NewsAPI errors
      */
     public class NewsAPIException extends Exception {}
+    public class JsonParsingException extends Exception {}
+    public class CalloutException extends Exception {}
 } 
