@@ -4,6 +4,5 @@
     "**/bower_components": true,
     "**/.sfdx": true
   },
-"salesforcedx-vscode-core.show-cli-success-msg": false,
-"salesforce.einsteinForDevelopers.enable": false
+  "salesforcedx-vscode-core.show-cli-success-msg": false
 }
