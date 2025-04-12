@@ -11,22 +11,22 @@ public class NewsAPIResponse {
      * Inner class representing a news article
      */
     public class Article {
-        // TODO: Define article fields
-        // Example fields:
-        // public String title { get; set; }
-        // public String description { get; set; }
-        // public String url { get; set; }
-        // etc.
+        public Source source { get; set; }
+        public String author { get; set; }
+        public String title { get; set; }
+        public String description { get; set; }
+        public String url { get; set; }
+        public String urlToImage { get; set; }
+        public String publishedAt { get; set; }
+        public String content { get; set; }
     }
     
     /**
      * Inner class representing a news source
      */
     public class Source {
-        // TODO: Define source fields
-        // Example fields:
-        // public String id { get; set; }
-        // public String name { get; set; }
+        public String id { get; set; }
+        public String name { get; set; }
     }
     
     /**
@@ -35,13 +35,22 @@ public class NewsAPIResponse {
      * @return Article__c The Salesforce record
      */
     public static Article__c convertToSObject(Article apiArticle) {
-        // TODO: Implement conversion from API article to Salesforce record
-        // Consider:
-        // - Generating a unique record name
-        // - Setting article fields from the API response
-        // - Handling content length limits if needed
-        // - Handling date conversion
+        Article__c sfArticle = new Article__c();
+        sfArticle.Author__c = apiArticle.author;
+        sfArticle.Content__c = apiArticle.content == null ? null : apiArticle.content.left(131072);
+        sfArticle.Country__c = null;
+        sfArticle.Description__c = apiArticle.description.left(32768);
+        sfArticle.Published_At__c = (DateTime) JSON.deserialize('\"' + apiArticle.publishedAt + '\"', Datetime.class);
+        sfArticle.Source__c = apiArticle.source.name;
+        sfArticle.Title__c = apiArticle.title.left(255);
+        sfArticle.url__c = apiArticle.url.left(255);
+        sfArticle.urlToImage__c = apiArticle.urlToImage.left(255);
+        sfArticle.Name = String.valueOf(sfArticle.Published_At__c) + sfArticle.Title__c.left(232); // 255 string length - date time char length
+
+        // assigning category variables to article
+        // sfArticle.News_Category__c = categoryId;
+        // sfArticle.Category__c = category;
         
-        return null;
+        return sfArticle;
     }
 } 
