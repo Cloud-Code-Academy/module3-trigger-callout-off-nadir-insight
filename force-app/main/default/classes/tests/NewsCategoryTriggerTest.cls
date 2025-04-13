@@ -1,19 +1,17 @@
 @IsTest
 private class NewsCategoryTriggerTest {
     
-    @TestSetup
-    static void setup() {
+    
+    private static void setup() {
         // Create test data
         List<News_Category__c> categories = new List<News_Category__c>{
             new News_Category__c(
                 Name = 'Technology',
-                Sync__c = true,
-                Pages__c = 1
+                Sync__c = true
             ),
             new News_Category__c(
                 Name = 'Business',
-                Sync__c = false,
-                Pages__c = 1
+                Sync__c = false
             )
         };
         insert categories;
@@ -29,8 +27,7 @@ private class NewsCategoryTriggerTest {
         // Create a new category with Sync__c = true
         News_Category__c newCategory = new News_Category__c(
             Name = 'Science',
-            Sync__c = true,
-            Pages__c = 1
+            Sync__c = true
         );
         insert newCategory;
         
@@ -62,8 +59,7 @@ private class NewsCategoryTriggerTest {
         // Create a new category with Sync__c = false
         News_Category__c newCategory = new News_Category__c(
             Name = 'Sports',
-            Sync__c = false,
-            Pages__c = 1
+            Sync__c = false
         );
         insert newCategory;
         
@@ -82,6 +78,8 @@ private class NewsCategoryTriggerTest {
     static void testUpdateWithSyncChangeToTrue() {
         // Set up the mock for API callout
         Test.setMock(HttpCalloutMock.class, NewsAPIMock.createSuccessMock());
+
+        setup();
         
         // Get the business category
         News_Category__c category = [
@@ -119,16 +117,18 @@ private class NewsCategoryTriggerTest {
     
     @IsTest
     static void testUpdateWithNoRelevantChanges() {
+        Test.setMock(HttpCalloutMock.class, NewsAPIMock.createSuccessMock());
+        setup();
         // Get the business category
         News_Category__c category = [
-            SELECT Id, Sync__c, Pages__c 
+            SELECT Id, Sync__c 
             FROM News_Category__c 
             WHERE Name = 'Business'
         ];
         
         Test.startTest();
         
-        // Update with no changes to Sync__c or Pages__c
+        // Update with no changes to Sync__c
         category.Name = 'Business Updated';
         update category;
         
@@ -142,5 +142,4 @@ private class NewsCategoryTriggerTest {
         ];
         Assert.areEqual(0, articles.size(), 'Should not have created any articles');
     }
-
 } 

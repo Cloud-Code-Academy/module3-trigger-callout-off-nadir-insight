@@ -138,6 +138,9 @@ jobs:
             echo "Creating new scratch org..."
             sf org create scratch --duration-days 1 --alias ${{ env.ORG_NAME }} --definition-file config/project-scratch-def.json
             echo "Created new scratch org with alias ${{ env.ORG_NAME }}"
+
+            echo "Installing Nebula logging"
+            sf package install --wait 20 --security-type AdminsOnly --package 04t5Y0000015pGKQAY --no-prompt --target-org ${{ env.ORG_NAME }}
            
             echo "Deploying to new scratch org..."
             sf project deploy start --target-org ${{ env.ORG_NAME }}

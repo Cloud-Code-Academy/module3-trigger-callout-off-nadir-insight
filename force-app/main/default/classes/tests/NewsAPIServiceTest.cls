@@ -9,7 +9,7 @@ private class NewsAPIServiceTest {
         Test.startTest();
         
         // Test with valid parameters
-        NewsAPIResponse response = NewsAPIService.getTopHeadlinesByCategory('technology', 20, 1);
+        NewsAPIResponse response = NewsAPIService.getTopHeadlinesByCategory('technology', 1);
         
         Test.stopTest();
         
@@ -26,8 +26,8 @@ private class NewsAPIServiceTest {
         
         Test.startTest();
         
-        // Test with invalid page size (should use default)
-        NewsAPIResponse response = NewsAPIService.getTopHeadlinesByCategory('technology', 0, 1);
+        // Test with invalid page (should use default of 1)
+        NewsAPIResponse response = NewsAPIService.getTopHeadlinesByCategory('technology', 0);
         
         Test.stopTest();
         
