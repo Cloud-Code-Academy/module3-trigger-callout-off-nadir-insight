@@ -2,7 +2,6 @@
  * Handler class for NewsCategoryTrigger
  */
 public with sharing class NewsCategoryTriggerHandler {
-    
     /**
      * Handles after insert events for News_Category__c
      * Uses Queueable for callouts when Sync__c is true
@@ -10,8 +9,18 @@ public with sharing class NewsCategoryTriggerHandler {
      */
     public static void handleInsert(List<News_Category__c> newRecords) {
         // TODO: Implement insert handler
-        // - Filter categories that need to be synced (Sync__c = true)
-        // - Call queueable method for callouts
+
+        List<News_Category__c> categoriesToSync = new List<News_Category__c>();
+
+        for (News_Category__c category : newRecords) {
+            if (category.Sync__c) {
+                categoriesToSync.add(category);
+            }
+        }
+
+        if (!categoriesToSync.isEmpty()) {
+            syncCategoriesWithQueueable(categoriesToSync);
+        }
     }
     
     /**
@@ -22,8 +31,16 @@ public with sharing class NewsCategoryTriggerHandler {
      */
     public static void handleUpdate(List<News_Category__c> newRecords, Map<Id, News_Category__c> oldMap) {
         // TODO: Implement update handler
-        // - Filter categories that need to be synced (Sync__c changed from false to true)
-        // - Call queueable method for callouts
+        List<News_Category__c> categoriesToSync = new List<News_Category__c>();
+
+        for (News_Category__c category : newRecords) {
+            if (category.Sync__c == true) {
+                categoriesToSync.add(category);
+            }
+        }
+        if (!categoriesToSync.isEmpty()) {
+            syncCategoriesWithQueueable(categoriesToSync);
+        }
     }
     
     /**
@@ -33,5 +50,10 @@ public with sharing class NewsCategoryTriggerHandler {
     private static void syncCategoriesWithQueueable(List<News_Category__c> categoriesToSync) {
         // TODO: Implement queueable job enqueuing
         // - Create and enqueue NewsCategoryQueueable job for each category
+        for (News_Category__c category : categoriesToSync) {
+            // if(!Test.isRunningTest()) {
+                System.enqueueJob(new NewsCategoryQueueable(category, 1));
+            // }
+        }
     }
 } 
