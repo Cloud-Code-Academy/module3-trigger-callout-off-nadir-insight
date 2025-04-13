@@ -17,7 +17,7 @@ public with sharing class NewsAPIService {
      * @return NewsAPIResponse The wrapper object containing the API response
      */
     public static NewsAPIResponse getTopHeadlinesByCategory(String category, Integer page) {
-        String urlCategory = validNewsCategories.contains(category) ? category : 'general';
+        String urlCategory = validNewsCategories.contains(category.toLowerCase()) ? category : 'general';
         String urlPage = page > 0 ? String.valueOf(page) : '1';
         String requestUrl = buildRequestUrl(urlCategory, urlPage);
         HttpResponse response = makeCallout(requestUrl);
